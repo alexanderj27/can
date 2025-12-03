@@ -33,10 +33,6 @@ public class Robot extends TimedRobot {
     m_rightFront = new SparkMax(5, MotorType.kBrushed);
     m_rightRear  = new SparkMax(4, MotorType.kBrushed);
 
-    // FOLLOW SETUP (kept exactly same logic)
-    m_leftRear.follow(m_leftFront);
-    m_rightRear.follow(m_rightFront);
-
     // INVERSION (kept same structure, only touched motor assignments)
     m_leftFront.setInverted(false);
     m_leftRear.setInverted(false);

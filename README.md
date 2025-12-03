@@ -10,38 +10,50 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class Robot extends TimedRobot {
 
-  private SparkMax m_leftMotor;
-  private SparkMax m_rightMotor;
-  
+  // 4 SparkMax controllers
+  private SparkMax m_leftFront;
+  private SparkMax m_leftRear;
+  private SparkMax m_rightFront;
+  private SparkMax m_rightRear;
 
   private DifferentialDrive m_drive;
-
   private Joystick m_stick;
 
   @Override
   public void robotInit() {
-    // SparkMax on CAN IDs 1 & 2
-    m_leftMotor = new SparkMax(2, MotorType.kBrushed);
-    m_rightMotor = new SparkMax(4, MotorType.kBrushed);
-   
+    // CAN IDs you listed:
+    // front left = 3
+    // back left  = 2
+    // front right = 5
+    // back right = 4
 
-    // Invert right side (depends on your robot's wiring)
-    m_rightMotor.setInverted(true);
+    m_leftFront = new SparkMax(3, MotorType.kBrushed);
+    m_leftRear  = new SparkMax(2, MotorType.kBrushed);
 
-    // DifferentialDrive (REV SparkMax supports "set" directly)
-    m_drive = new DifferentialDrive(m_leftMotor, m_rightMotor);
+    m_rightFront = new SparkMax(5, MotorType.kBrushed);
+    m_rightRear  = new SparkMax(4, MotorType.kBrushed);
+
+    // FOLLOW SETUP (kept exactly same logic)
+    m_leftRear.follow(m_leftFront);
+    m_rightRear.follow(m_rightFront);
+
+    // INVERSION (kept same structure, only touched motor assignments)
+    m_leftFront.setInverted(false);
+    m_leftRear.setInverted(false);
+
+    m_rightFront.setInverted(true);
+    m_rightRear.setInverted(false);
+
+    m_drive = new DifferentialDrive(m_leftFront, m_rightFront);
 
     m_stick = new Joystick(0);
   }
 
   @Override
   public void teleopPeriodic() {
-    // Tank drive with one joystick:
-    // pushing up drives forward, down drives reverse
     double forward = -m_stick.getY();
     double turn = m_stick.getX();
 
-    // Arcade drive instead of tank (left Y, right X)
     m_drive.arcadeDrive(forward, turn);
   }
 }
